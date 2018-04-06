@@ -1,0 +1,148 @@
+fmap :: Functor f => (a -> b) -> f a -> f b
+
+object Functor {
+  def fmap[F[_]: Functor, A, B](f: A=>B, fa: F[A]): F[B]
+}
+
+data Maybe a = Nothing | Just a
+
+sealed trait Maybe[A]
+case object Nothing extends Maybe[Nothing]
+case class Just[A](value: A) extends Maybe[A]
+
+fun :: a -> a
+fun x = x
+
+multiplyBy2 :: Num a => a -> a
+multiplyBy2 x = x * 2
+
+sequence [Just 1, Nothing, Just 3]
+
+import cats.implicits._
+List(Some(1), None, Some(3)).sequence
+
+def add(n: Int)(m: Int): Int
+
+List(1,2,3).map(x => add(1, x))
+
+
+List(1,2,3).map(add(1
+
+Some(10).map(x => x + 1)
+
+:t add
+add :: Fractional a => a -> a -> a
+Prelude> let add x y = (x + y)
+Prelude> :t add
+add :: Num a => a -> a -> a
+Prelude> add 1 2
+3
+Prelude> let three = add 1 2
+Prelude> three
+3
+Prelude> let addOne = add 1
+Prelude> :t addOne
+addOne :: Num a => a -> a
+Prelude> addOne
+
+Prelude> map addOne [1..5]
+[2,3,4,5,6]
+
+Prelude> map (add 7) [1..5]
+[8,9,10,11,12]
+Prelude> map (\x -> add 7 x) [1..5]
+[8,9,10,11,12]
+Prelude> fmap addOne (Just 10)
+Just 11
+Prelude> fmap addOne Nothing
+Nothing
+
+Prelude> :t (<$>)
+(<$>) :: Functor f => (a -> b) -> f a -> f b
+Prelude> :t fmap
+fmap :: Functor f => (a -> b) -> f a -> f b
+Prelude> :t (+)
+(+) :: Num a => a -> a -> a
+Prelude> (+) 1 2
+3
+Prelude> 1 + 2
+3
+Prelude> fmap (x -> x + 1) [1..10]
+Prelude> fmap (\x -> x + 1) [1..10]
+[2,3,4,5,6,7,8,9,10,11]
+Prelude> (<$>) (\x -> x + 1) [1..10]
+[2,3,4,5,6,7,8,9,10,11]
+Prelude> (\x -> x + 1) <$> [1..10]
+[2,3,4,5,6,7,8,9,10,11]
+Prelude> data Person = Person { name :: String , age :: Int } deriving Show
+Prelude> let me = Person "Tya" 26
+Prelude> me
+Person {name = "Tya", age = 26}
+Prelude> let gimmeName = "Random Name"
+Prelude> let gimmeAge = Just 22
+Prelude> Person <$> gimmeName <*> gimmeAge
+Just (Person {name = "Random Name", age = 22})
+Prelude> fmap Person (gimmeName <*> gimmeAge)
+Prelude> Person <$> gimmeName <*> gimmeAge
+Just (Person {name = "Random Name", age = 22})
+Prelude> (Just (\x -> x + 1)) <*> Just 50
+Just 51
+
+Some("Name").map(name => Person(name, _))
+
+def addTen(x: Int): Int  = x + 10
+val addTen: Option[Int => Int] = Some(x => x + 10)
+
+Some(1).map(x => addTen.map(func => func(x)))
+
+Applicative[Option].map(Some(1))(num => addTen(num))
+
+List(1,2,3).flatMap(x => List(x * 2))
+
+case class User(name: String, optOccupation: Option[Occupation])
+def getUser(userId: Int): Option[User]
+def getOccupation(user: User): Option[Occupation]
+
+
+val optOccupation: Option[Occupation] = for {
+  user <- getUser(123)
+  occupation <- getOccupation(user)
+} yield occupation
+
+getUser(123).flatMap(getOccupation)
+
+do
+user <- getUser 123
+occupation <- getOccupation user
+return occupation
+
+getUser 123 >>= (getOccupation)
+
+
+
+*Main> showGrade (Fail 42)
+"Failed with 42"
+*Main> showGrade $ Fail 42
+"Failed with 42"
+
+
+
+
+
+class Monoid m where
+  op :: m -> m -> m
+  identity :: m
+
+trait Monoid[M] {
+  def op(a: M, b: M): M
+  def identity: M
+}
+
+instance Monoid Int where
+  op x y = x + y
+  identity = 0
+
+implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
+  def op(a: Int, b: Int): Int = a + b
+  def identity: Int = 0
+}
