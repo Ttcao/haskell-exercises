@@ -47,3 +47,14 @@ greetIfCool2 coolness =
   else
     putStrLn "pshhhhh."
   where cool v = v == "downright frosty yo"
+
+isPalindrome :: (Eq a) => [a] -> Bool
+isPalindrome x =
+  x == reverse x
+
+isPalindrome2 :: (Eq a) => [a] -> IO ()
+isPalindrome2 x =
+  if x == reverse x
+    then putStrLn "It's a palindrome!"
+  else
+    putStrLn "Not a palindrome!"
